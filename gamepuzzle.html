@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Puzzle for Kanishka</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive;
+      background-color: #fff0f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      color: #ff69b4;
+    }
+
+    #puzzle {
+      width: 300px;
+      height: 300px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-top: 20px;
+    }
+
+    .tile {
+      width: 100px;
+      height: 100px;
+      background-size: 300px 300px;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    .hidden {
+      background: #fff0f5;
+    }
+
+    #message {
+      margin-top: 20px;
+      font-size: 18px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <h1>Put the Puzzle Together, Kanishka!</h1>
+  <div id="puzzle"></div>
+  <div id="message"></div>
+
+  <script>
+    const puzzle = document.getElementById("puzzle");
+    const message = document.getElementById("message");
+
+    const tileOrder = [...Array(9).keys()];
+    tileOrder.sort(() => Math.random() - 0.5);
+
+    function isSolved(order) {
+      return order.every((val, i) => val === i);
+    }
+
+    function renderPuzzle() {
+      puzzle.innerHTML = "";
+      tileOrder.forEach((index, i) => {
+        const tile = document.createElement("div");
+        tile.classList.add("tile");
+        tile.style.backgroundImage = index === 8 ? "none" : "url('images/puzzle-img.jpg')";
+        tile.style.backgroundPosition = `-${(index % 3) * 100}px -${Math.floor(index / 3) * 100}px`;
+        if (index === 8) tile.classList.add("hidden");
+        tile.addEventListener("click", () => moveTile(i));
+        puzzle.appendChild(tile);
+      });
+    }
+
+    function moveTile(i) {
+      const emptyIndex = tileOrder.indexOf(8);
+      const validMoves = [i - 1, i + 1, i - 3, i + 3];
+      if (validMoves.includes(emptyIndex)) {
+        [tileOrder[i], tileOrder[emptyIndex]] = [tileOrder[emptyIndex], tileOrder[i]];
+        renderPuzzle();
+        if (isSolved(tileOrder)) {
+          message.textContent = "Yay! You did it 💖 Now go to the next page...";
+          setTimeout(() => {
+            window.location.href = "proposal.html";
+          }, 3000);
+        }
+      }
+    }
+
+    renderPuzzle();
+  </script>
+</body>
+</html>
